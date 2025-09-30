@@ -11,7 +11,7 @@ lib_dir = os.path.join(this_dir, "lib")
 if lib_dir not in sys.path:
     sys.path.insert(0, lib_dir)
 
-from niksms.rest import NiksmsRestClient
+from niksms import NiksmsRestClient
 
 SPLUNK_HOME = os.environ.get("SPLUNK_HOME")
 
@@ -27,8 +27,8 @@ handler = TimedRotatingFileHandler(LOG_FILENAME, when="d", interval=1, backupCou
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-def send_sms(api_key, base_url, sender_number, phone, message, retries=3, delay=5):
-    client = NiksmsRestClient(base_url=base_url, api_key=api_key)
+def send_sms(api_key, sender_number, phone, message, retries=3, delay=5):
+    client = NiksmsRestClient(api_key=api_key)
     for attempt in range(retries):
         try:
             result = client.send_single(sender_number=sender_number, phone=phone, message=message)
@@ -52,7 +52,6 @@ if __name__ == "__main__":
         # Extract configuration parameters
         config = payload.get('configuration', {})
         api_key = config.get('apikey', '')
-        base_url = 'https://webservice.niksms.com'
         sender_number = config.get('sender', '')
         phone = config.get('phone', '')
         message = config.get('message', 'Anomaly Detected: Default Message')
@@ -80,7 +79,7 @@ if __name__ == "__main__":
         logger.info("API Key: [REDACTED]")  # avoid logging sensitive info
 
         # Send SMS
-        send_sms(api_key, base_url, sender_number, phone, message)
+        send_sms(api_key, sender_number, phone, message)
 
     except json.JSONDecodeError as e:
         logger.error("Failed to parse JSON payload: %s", e)
