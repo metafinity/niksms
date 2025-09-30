@@ -1,0 +1,362 @@
+Metadata-Version: 2.4
+Name: Niksms
+Version: 1.2.0
+Summary: niksms webservice
+Home-page: https://webservice.niksms.com
+Author: Kendez
+Author-email: Niksms <info@niksms.com>
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+Requires-Dist: requests
+Requires-Dist: grpcio
+Requires-Dist: protobuf
+Dynamic: author
+Dynamic: home-page
+Dynamic: requires-python
+
+# niksms Python SDK
+
+این پکیج برای اتصال آسان به وب‌سرویس پیامک Kendez.NikSms (نسخه REST و gRPC) در پایتون طراحی شده است.
+
+This package provides an easy-to-use Python SDK for connecting to the Kendez.NikSms SMS web service (REST & gRPC).
+
+## نصب / Installation
+
+```bash
+pip install niksms
+```
+
+## ویژگی‌ها / Features
+- اتصال به REST API و gRPC
+- قابل استفاده در پروژه‌های مختلف پایتون
+- استفاده از آدرس‌های ثابت و قابل اعتماد
+- پشتیبانی از تمام متدهای ارسال پیامک (تکی، گروهی، PTP، OTP)
+- دریافت وضعیت پیامک‌ها و اطلاعات پنل
+
+## استفاده سریع / Quick Usage
+
+### REST Example
+```python
+from niksms import NiksmsRestClient
+
+client = NiksmsRestClient(api_key="YOUR_API_KEY")
+
+# ارسال پیامک تکی
+result = client.send_single(sender_number="5000...", phone="0912...", message="کد تایید شما: 1234")
+print(result)
+
+# دریافت اعتبار
+credit = client.get_credit()
+print(credit)
+```
+
+### gRPC Example
+```python
+from niksms import NiksmsGrpcClient
+
+client = NiksmsGrpcClient(api_key="YOUR_API_KEY")
+
+# ارسال پیامک تکی
+result = client.send_single(sender_number="5000...", phone="0912...", message="کد تایید شما: 1234")
+print(result)
+
+# دریافت اعتبار
+credit = client.get_credit()
+print(credit)
+```
+
+## مستندات کامل / Complete Documentation
+
+### متدهای ارسال پیامک / SMS Sending Methods
+
+#### 1. ارسال پیامک تکی / Send Single SMS
+
+**REST:**
+```python
+from niksms import NiksmsRestClient
+
+client = NiksmsRestClient(api_key="YOUR_API_KEY")
+
+result = client.send_single(
+    sender_number="50004001",           # شماره فرستنده
+    phone="09123456789",                # شماره گیرنده
+    message="سلام! این یک پیام تست است.",  # متن پیام
+    message_id="unique_id_123",         # شناسه یکتا (اختیاری)
+    send_date="2024-01-01T10:30:00",    # تاریخ ارسال (اختیاری)
+    send_type=1                         # نوع ارسال (اختیاری)
+)
+print(result)
+```
+
+**gRPC:**
+```python
+from niksms import NiksmsGrpcClient
+
+client = NiksmsGrpcClient(api_key="YOUR_API_KEY")
+
+result = client.send_single(
+    sender_number="50004001",
+    phone="09123456789", 
+    message="سلام! این یک پیام تست است.",
+    message_id="unique_id_123",
+    send_date="2024-01-01T10:30:00",
+    send_type=1
+)
+print(result)
+```
+
+#### 2. ارسال پیامک گروهی / Send Group SMS
+
+**REST:**
+```python
+recipients = [
+    {"Phone": "09123456789", "MessageId": "msg_001"},
+    {"Phone": "09123456790", "MessageId": "msg_002"},
+    {"Phone": "09123456791", "MessageId": "msg_003"}
+]
+
+result = client.send_group(
+    sender_number="50004001",
+    message="پیام گروهی برای همه کاربران",
+    recipients=recipients,
+    send_date="2024-01-01T10:30:00",
+    send_type=1
+)
+print(result)
+```
+
+**gRPC:**
+```python
+recipients = [
+    {"Phone": "09123456789", "MessageId": "msg_001"},
+    {"Phone": "09123456790", "MessageId": "msg_002"},
+    {"Phone": "09123456791", "MessageId": "msg_003"}
+]
+
+result = client.send_group(
+    sender_number="50004001",
+    message="پیام گروهی برای همه کاربران",
+    recipients=recipients,
+    send_date="2024-01-01T10:30:00",
+    send_type=1
+)
+print(result)
+```
+
+#### 3. ارسال PTP (هر نفر پیام متفاوت) / Send PTP SMS
+
+**REST:**
+```python
+recipients = [
+    {"Phone": "09123456789", "Message": "سلام علی", "MessageId": "ptp_001"},
+    {"Phone": "09123456790", "Message": "سلام رضا", "MessageId": "ptp_002"},
+    {"Phone": "09123456791", "Message": "سلام مریم", "MessageId": "ptp_003"}
+]
+
+result = client.send_ptp(
+    sender_number="50004001",
+    recipients=recipients,
+    send_date="2024-01-01T10:30:00",
+    send_type=1
+)
+print(result)
+```
+
+**gRPC:**
+```python
+recipients = [
+    {"Phone": "09123456789", "Message": "سلام علی", "MessageId": "ptp_001"},
+    {"Phone": "09123456790", "Message": "سلام رضا", "MessageId": "ptp_002"},
+    {"Phone": "09123456791", "Message": "سلام مریم", "MessageId": "ptp_003"}
+]
+
+result = client.send_ptp(
+    sender_number="50004001",
+    recipients=recipients,
+    send_date="2024-01-01T10:30:00",
+    send_type=1
+)
+print(result)
+```
+
+#### 4. ارسال پیامک OTP / Send OTP SMS
+
+**REST:**
+```python
+result = client.send_otp(
+    sender_number="50004001",
+    phone="09123456789",
+    message="کد تایید شما: 1234",
+    message_id="otp_001",
+    send_date="2024-01-01T10:30:00",
+    send_type=1
+)
+print(result)
+```
+
+**gRPC:**
+```python
+result = client.send_otp(
+    sender_number="50004001",
+    phone="09123456789",
+    message="کد تایید شما: 1234",
+    message_id="otp_001",
+    send_date="2024-01-01T10:30:00",
+    send_type=1
+)
+print(result)
+```
+
+### متدهای دریافت اطلاعات / Information Methods
+
+#### 1. دریافت اعتبار / Get Credit
+
+**REST:**
+```python
+credit_info = client.get_credit()
+print(f"اعتبار باقی‌مانده: {credit_info}")
+```
+
+**gRPC:**
+```python
+credit_info = client.get_credit()
+print(f"اعتبار باقی‌مانده: {credit_info}")
+```
+
+#### 2. دریافت تاریخ انقضای پنل / Get Panel Expire Date
+
+**REST:**
+```python
+expire_date = client.get_panel_expire_date()
+print(f"تاریخ انقضای پنل: {expire_date}")
+```
+
+**gRPC:**
+```python
+expire_date = client.get_panel_expire_date()
+print(f"تاریخ انقضای پنل: {expire_date}")
+```
+
+#### 3. دریافت وضعیت پیامک‌ها / Get SMS Status
+
+**REST:**
+```python
+message_ids = ["msg_001", "msg_002", "msg_003"]
+status = client.get_sms_status(message_ids)
+print(f"وضعیت پیامک‌ها: {status}")
+```
+
+**gRPC:**
+```python
+message_ids = ["msg_001", "msg_002", "msg_003"]
+status = client.get_sms_status(message_ids)
+print(f"وضعیت پیامک‌ها: {status}")
+```
+
+## مثال کامل / Complete Example
+
+```python
+from niksms import NiksmsRestClient, NiksmsGrpcClient
+import time
+
+# تنظیمات
+API_KEY = "YOUR_API_KEY"
+SENDER_NUMBER = "50004001"
+
+# استفاده از REST API
+print("=== REST API Example ===")
+rest_client = NiksmsRestClient(api_key=API_KEY)
+
+# ارسال پیامک تکی
+single_result = rest_client.send_single(
+    sender_number=SENDER_NUMBER,
+    phone="09123456789",
+    message="سلام! این یک پیام تست از REST API است."
+)
+print("Single SMS Result:", single_result)
+
+# ارسال پیامک گروهی
+group_recipients = [
+    {"Phone": "09123456789", "MessageId": "group_001"},
+    {"Phone": "09123456790", "MessageId": "group_002"}
+]
+group_result = rest_client.send_group(
+    sender_number=SENDER_NUMBER,
+    message="پیام گروهی از REST API",
+    recipients=group_recipients
+)
+print("Group SMS Result:", group_result)
+
+# دریافت اعتبار
+credit = rest_client.get_credit()
+print("Credit:", credit)
+
+# دریافت وضعیت پیامک‌ها
+status = rest_client.get_sms_status(["group_001", "group_002"])
+print("Status:", status)
+
+# استفاده از gRPC API
+print("\n=== gRPC API Example ===")
+try:
+    grpc_client = NiksmsGrpcClient(api_key=API_KEY)
+    
+    # ارسال پیامک OTP
+    otp_result = grpc_client.send_otp(
+        sender_number=SENDER_NUMBER,
+        phone="09123456789",
+        message="کد تایید شما: 1234",
+        message_id="otp_001"
+    )
+    print("OTP SMS Result:", otp_result)
+    
+    # دریافت اطلاعات پنل
+    panel_info = grpc_client.get_panel_expire_date()
+    print("Panel Expire Date:", panel_info)
+    
+except Exception as e:
+    print(f"gRPC Error: {e}")
+```
+
+## مدیریت خطا / Error Handling
+
+```python
+from niksms import NiksmsRestClient
+import requests
+
+client = NiksmsRestClient(api_key="YOUR_API_KEY")
+
+try:
+    result = client.send_single(
+        sender_number="50004001",
+        phone="09123456789",
+        message="پیام تست"
+    )
+    print("Success:", result)
+    
+except requests.exceptions.HTTPError as e:
+    print(f"HTTP Error: {e}")
+except requests.exceptions.ConnectionError as e:
+    print(f"Connection Error: {e}")
+except Exception as e:
+    print(f"General Error: {e}")
+```
+
+## نکات مهم / Important Notes
+
+1. **API Key**: کلید API خود را از پنل کاربری دریافت کنید
+2. **شماره فرستنده**: شماره فرستنده باید از شماره‌های مجاز پنل شما باشد
+3. **نوع ارسال**: مقادیر مختلف `send_type` برای انواع مختلف پیامک
+4. **تاریخ ارسال**: فرمت تاریخ باید `YYYY-MM-DDTHH:MM:SS` باشد
+5. **شناسه پیام**: برای پیگیری وضعیت پیامک‌ها، شناسه یکتا تعیین کنید
+
+## پشتیبانی / Support
+
+برای پشتیبانی و راهنمایی بیشتر با تیم فنی تماس بگیرید.
+021-74552000
+---
+
+**نسخه / Version:** 1.0.0  
+**آخرین به‌روزرسانی / Last Update:** 2024

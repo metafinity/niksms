@@ -1,0 +1,16 @@
+niksms-1.2.0.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
+niksms-1.2.0.dist-info/METADATA,sha256=QJ4xKnws4oTnJU9AmBC6lOqowAXThRJ6e_E1nwIgfAg,10089
+niksms-1.2.0.dist-info/RECORD,,
+niksms-1.2.0.dist-info/REQUESTED,sha256=47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU,0
+niksms-1.2.0.dist-info/WHEEL,sha256=_zCd3N1l69ArxyTb8rzEoP9TpbYXkqRFSNOD5OuxnTs,91
+niksms-1.2.0.dist-info/top_level.txt,sha256=qNJI83TK8P8Nb6c0s5l5pP5hZYwduVkvkFiMTjQHWSU,7
+niksms/Service_pb2.py,sha256=zTDvLM8wNIfCUmjT5b3Nba74r-QIVQBa40nRasOX4a4,30177
+niksms/Service_pb2_grpc.py,sha256=eOUS8sb8rPxHw6tvi9qOt8MJpT9TuIpZPKMGCUXC0aY,16225
+niksms/__init__.py,sha256=dy1Ki4GN8wu3IRjcMVvhb4Py37VuEHDNlb5DwEquQuA,152
+niksms/__pycache__/Service_pb2.cpython-313.pyc,,
+niksms/__pycache__/Service_pb2_grpc.cpython-313.pyc,,
+niksms/__pycache__/__init__.cpython-313.pyc,,
+niksms/__pycache__/grpc.cpython-313.pyc,,
+niksms/__pycache__/rest.cpython-313.pyc,,
+niksms/grpc.py,sha256=dTmns7WnE31wQoJ2nIbZfwlUhU-O8QDUoOZI_7wLlj4,4424
+niksms/rest.py,sha256=ibWncxGwYMM6N0nNekG31PLI2p1dd0riOK24MnSYTZ8,2873

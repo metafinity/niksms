@@ -1,10 +1,13 @@
-[bale_message]
+[niksms]
 
-param.bottoken = <string>
-* Bot Token get from bale
+param.apikey = <string>
+* Api key get from niksms
 
-param.chatid = <string>
-* Chat_ID to send the notification to
+param.sender = <string>
+* Sender number to send the notification from
+
+param.phone = <string>
+* Phone number to send the notification to
 
 param.message = <string>
 * The message content
