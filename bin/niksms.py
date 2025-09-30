@@ -11,12 +11,12 @@ lib_dir = os.path.join(this_dir, "lib")
 if lib_dir not in sys.path:
     sys.path.insert(0, lib_dir)
 
-from niksms import NiksmsRestClient
+from niksms.rest import NiksmsRestClient
 
 SPLUNK_HOME = os.environ.get("SPLUNK_HOME")
 
 # Log file path
-LOG_FILENAME = os.path.join(SPLUNK_HOME, "var", "log", "splunk", "sms_alert.log")
+LOG_FILENAME = os.path.join(SPLUNK_HOME, "var", "log", "splunk", "niksms_alert.log")
 
 # Logger setup
 logger = logging.getLogger('sms_alert')
