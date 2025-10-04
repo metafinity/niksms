@@ -54,7 +54,7 @@ if __name__ == "__main__":
         # Extract configuration parameters
         config = payload.get('configuration', {})
         api_key = config.get('apikey', '')
-        phones = config.get('phone', '')
+        phones = config.get('phones', '')
         message = config.get('message', 'Anomaly Detected: Default Message')
 
         # Validate Parameters
