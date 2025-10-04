@@ -59,7 +59,7 @@ if __name__ == "__main__":
         api_key = config.get('apikey', '')
         sender_number = config.get('sender', '')
         phones = config.get('phones', '')
-        message = config.get('message', 'Anomaly Detected: Default Message')
+        message = config.get('message', 'Splunk Alert: Default Message')
 
         # Validate Parameters
         if not api_key:
