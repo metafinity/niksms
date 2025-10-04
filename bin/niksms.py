@@ -1,11 +1,10 @@
 import json
 import sys
 import logging
-import time
 import os
 from logging.handlers import TimedRotatingFileHandler
 
-# اضافه کردن niksms به مسیر (اگر vendorized کردی)
+# Ensure niksms library path is included
 this_dir = os.path.dirname(__file__)
 lib_dir = os.path.join(this_dir, "lib")
 if lib_dir not in sys.path:
@@ -14,12 +13,10 @@ if lib_dir not in sys.path:
 from niksms import NiksmsRestClient
 
 SPLUNK_HOME = os.environ.get("SPLUNK_HOME")
-
-# Log file path
 LOG_FILENAME = os.path.join(SPLUNK_HOME, "var", "log", "splunk", "niksms_alert.log")
 
-# Logger setup
-logger = logging.getLogger('sms_alert')
+# Set up logging
+logger = logging.getLogger('niksms_alert')
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 
@@ -27,20 +24,25 @@ handler = TimedRotatingFileHandler(LOG_FILENAME, when="d", interval=1, backupCou
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-def send_sms(api_key, sender_number, phone, message, retries=3, delay=5):
+
+def send_sms_group(api_key, phones, message):
+    """
+    Send SMS to a group of phone numbers using Niksms API.
+    """
     client = NiksmsRestClient(api_key=api_key)
-    for attempt in range(retries):
-        try:
-            result = client.send_single(sender_number=sender_number, phone=phone, message=message)
-            logger.info("SMS sent to %s: %s", phone, result)
-            return result
-        except Exception as e:
-            if attempt < retries - 1:
-                logger.warning("Error sending SMS, retrying (%d/%d) after %d seconds: %s", attempt + 1, retries, delay, e)
-                time.sleep(delay)
-                continue
-            logger.error("Failed to send SMS to %s: %s", phone, e)
-            raise
+
+    if isinstance(phones, str):
+        phones = [p.strip() for p in phones.split(",") if p.strip()]
+
+    recipients = [{"Phone": phone} for phone in phones]
+
+    result = client.send_group(
+        message=message,
+        recipients=recipients
+    )
+    logger.info("Group SMS sent to %s: %s", phones, result)
+    return result
+
 
 if __name__ == "__main__":
     logger.info("Received arguments: %s", sys.argv)
@@ -52,22 +54,17 @@ if __name__ == "__main__":
         # Extract configuration parameters
         config = payload.get('configuration', {})
         api_key = config.get('apikey', '')
-        sender_number = config.get('sender', '')
-        phone = config.get('phone', '')
+        phones = config.get('phone', '')
         message = config.get('message', 'Anomaly Detected: Default Message')
 
-        # Validation
+        # Validate Parameters
         if not api_key:
             logger.error("No API key provided")
             print("Error: No API key provided")
             sys.exit(1)
-        if not sender_number:
-            logger.error("No sender number provided")
-            print("Error: No sender number provided")
-            sys.exit(1)
-        if not phone:
-            logger.error("No phone number provided")
-            print("Error: No phone number provided")
+        if not phones:
+            logger.error("No phone numbers provided")
+            print("Error: No phone numbers provided")
             sys.exit(1)
         if not message:
             logger.error("No message provided")
@@ -75,11 +72,10 @@ if __name__ == "__main__":
             sys.exit(1)
 
         logger.info("Message: %s", message)
-        logger.info("Sendto (Phone): %s", phone)
-        logger.info("API Key: [REDACTED]")  # avoid logging sensitive info
+        logger.info("Sendto (Phones): %s", phones)
+        logger.info("API Key: [REDACTED]")
 
-        # Send SMS
-        send_sms(api_key, sender_number, phone, message)
+        send_sms_group(api_key, phones, message)
 
     except json.JSONDecodeError as e:
         logger.error("Failed to parse JSON payload: %s", e)
