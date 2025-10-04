@@ -30,7 +30,6 @@ def send_sms_group(api_key, sender_number, phones, message):
 
     payload = {
         "ApiKey": api_key,
-        "ServiceType": "SDK_Python",
         "SenderNumber": sender_number or "",  # Use empty string if sender_number is not provided
         "Message": message,
         "Recipients": recipients
