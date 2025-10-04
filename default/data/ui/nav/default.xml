@@ -1,6 +1,7 @@
 <nav search_view="search">
 
-  <view name="landing" default='true' />
+  <view name="landing1" default='true' />
+  <view name="landing2" default='true' />
   <view name="search"/>
        
 </nav>

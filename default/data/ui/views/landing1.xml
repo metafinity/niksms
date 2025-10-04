@@ -1,0 +1,56 @@
+<dashboard version="1.1" hideEdit="true">
+    <label>Send Niksms Message v1.2.1</label>
+
+    <row>
+        <panel>
+            <html>
+
+            <h1>Overview</h1>
+            <p>This is a Splunk Modular Alert for sending SMS messages to a group of phone numbers using the Niksms API.</p>
+            <p>The Python code in this App is Python 3 compatible and supports Splunk 8+.</p>
+            <p>All activities, including API requests, responses, and errors, are logged to:</p>
+            <pre>$SPLUNK_HOME/var/log/splunk/niksms_alert.log</pre>
+            <hr/>
+
+            <h1>Quickstart</h1>
+            <ol>
+                <li>Sign up on <a href="https://webservice.niksms.com/" target="_blank">Niksms</a> and obtain your API key.</li>
+                <li>Configure the custom alert action in Splunk with the following parameters:
+                    <ul>
+                        <li><b>API Key</b> → Your Niksms API key</li>
+                        <li><b>Sender Number</b> → Optional sender number</li>
+                        <li><b>Phones</b> → Comma-separated recipient phone numbers</li>
+                        <li><b>Message</b> → Message text (supports result tokens, e.g. $result.fieldname$)</li>
+                    </ul>
+                </li>
+                <li>Trigger an alert and the App will automatically send SMS to the configured recipients.</li>
+            </ol>
+            <hr/>
+
+            <h1>Parameters</h1>
+            <table border="1" cellpadding="4" cellspacing="0">
+                <tr><th>Parameter</th><th>Required</th><th>Description</th></tr>
+                <tr><td>apikey</td><td>Yes</td><td>Your Niksms API key</td></tr>
+                <tr><td>sender</td><td>No</td><td>Optional sender number</td></tr>
+                <tr><td>phones</td><td>Yes</td><td>Comma-separated recipient phone numbers</td></tr>
+                <tr><td>message</td><td>Yes</td><td>Message text (supports result tokens)</td></tr>
+            </table>
+            <hr/>
+
+            <h1>Logging</h1>
+            <p>Logs are written to <b>$SPLUNK_HOME/var/log/splunk/niksms_alert.log</b> and include:</p>
+            <ul>
+                <li>Received payload</li>
+                <li>API request and response details</li>
+                <li>Errors if sending fails</li>
+            </ul>
+            <hr/>
+
+            <h1>Developer</h1>
+            <p>This App is built and supported by <a href="https://github.com/metafinity/niksms_alert" target="_blank">Meysam Talebi</a>.</p>
+
+            </html>
+
+        </panel>
+    </row>
+</dashboard>
