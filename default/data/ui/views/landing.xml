@@ -18,7 +18,7 @@
             </style>
 
             <h1>Overview</h1>
-            <p>This is a Splunk Modular Alert for sending SMS messages to a group of phone numbers using the Niksms API.</p>
+            <p>This is a Splunk Custom Alert Action for sending SMS messages to a group of phone numbers using the Niksms API.</p>
             <p>The Python code in this App is Python 3 compatible and supports Splunk 8+.</p>
             <p>All activities, including API requests, responses, and errors, are logged to:</p>
             <pre>$SPLUNK_HOME/var/log/splunk/niksms_alert.log</pre>
