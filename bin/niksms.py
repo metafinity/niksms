@@ -2,46 +2,49 @@ import json
 import sys
 import logging
 import os
+import requests
 from logging.handlers import TimedRotatingFileHandler
 
-# Ensure niksms library path is included
-this_dir = os.path.dirname(__file__)
-lib_dir = os.path.join(this_dir, "lib")
-if lib_dir not in sys.path:
-    sys.path.insert(0, lib_dir)
-
-from niksms import NiksmsRestClient
-
-SPLUNK_HOME = os.environ.get("SPLUNK_HOME")
+SPLUNK_HOME = os.environ.get("SPLUNK_HOME", "/opt/splunk")
 LOG_FILENAME = os.path.join(SPLUNK_HOME, "var", "log", "splunk", "niksms_alert.log")
 
-# Set up logging
+# Logger setup
 logger = logging.getLogger('niksms_alert')
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
-
 handler = TimedRotatingFileHandler(LOG_FILENAME, when="d", interval=1, backupCount=5)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
+# API endpoint
+NIKSMS_API_URL = "https://webservice.niksms.com/api/v1/web-service/sms/send/group"
 
-def send_sms_group(api_key, phones, message):
+def send_sms_group(api_key, sender_number, phones, message):
     """
     Send SMS to a group of phone numbers using Niksms API.
     """
-    client = NiksmsRestClient(api_key=api_key)
-
     if isinstance(phones, str):
         phones = [p.strip() for p in phones.split(",") if p.strip()]
 
     recipients = [{"Phone": phone} for phone in phones]
 
-    result = client.send_group(
-        message=message,
-        recipients=recipients
-    )
-    logger.info("Group SMS sent to %s: %s", phones, result)
-    return result
+    payload = {
+        "ApiKey": api_key,
+        "ServiceType": "SDK_Python",
+        "SenderNumber": sender_number or "",  # Use empty string if sender_number is not provided
+        "Message": message,
+        "Recipients": recipients
+    }
+
+    try:
+        resp = requests.post(NIKSMS_API_URL, json=payload)
+        resp.raise_for_status()
+        result = resp.json()
+        logger.info("Group SMS sent to %s: %s", phones, result)
+        return result
+    except Exception as e:
+        logger.error("Failed to send group SMS: %s", e)
+        raise
 
 
 if __name__ == "__main__":
@@ -54,6 +57,7 @@ if __name__ == "__main__":
         # Extract configuration parameters
         config = payload.get('configuration', {})
         api_key = config.get('apikey', '')
+        sender_number = config.get('sender', '')
         phones = config.get('phones', '')
         message = config.get('message', 'Anomaly Detected: Default Message')
 
@@ -73,9 +77,10 @@ if __name__ == "__main__":
 
         logger.info("Message: %s", message)
         logger.info("Sendto (Phones): %s", phones)
+        logger.info("Sender: %s", sender_number or "[EMPTY]")
         logger.info("API Key: [REDACTED]")
 
-        send_sms_group(api_key, phones, message)
+        send_sms_group(api_key, sender_number, phones, message)
 
     except json.JSONDecodeError as e:
         logger.error("Failed to parse JSON payload: %s", e)
